@@ -1,0 +1,40 @@
+
+name: Build Max Royale APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'MaxRoyale_Android_Project_2.76.zip'
+      - '.github/workflows/build-apk.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Extract Android project
+        run: unzip -o MaxRoyale_Android_Project_2.76.zip
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build APK
+        working-directory: MaxRoyale_Android
+        run: gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Max-Royale-2.76-APK
+          path: MaxRoyale_Android/app/build/outputs/apk/debug/app-debug.apk
